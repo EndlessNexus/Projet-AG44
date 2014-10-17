@@ -1,0 +1,68 @@
+	public Vertex[] generateTranspose() {
+		// On génère un graph aux vertices identiques mais aux adjacencyList
+		// vierges
+		transpose = new Vertex[order];
+		for (int i = 0; i < order; i++) {
+			transpose[i] = new Vertex(graph[i]);
+			transpose[i].setAdjacencyList(new ArrayList<Vertex>());
+		}
+		// Pour chaque vertex du graph
+		for (int i = 0; i < order; i++) {
+			// On parcourt son adjacencyList
+			Iterator<Vertex> it = graph[i].getAdjacencyList().iterator();
+			while (it.hasNext()) {
+				// Dans le graph transposé, on ajoute à l'adjacencyList du
+				// vertex rencontré un vertex de la valeur du vertex dont on
+				// parcours l'adjacencyList
+				transpose[it.next().getValue() - 1].getAdjacencyList().add(transpose[(graph[i].getValue()) - 1]);
+			}
+		}
+		Iterator<Vertex> dfsListIt = dfsList.iterator();
+		// Pour chaque vertex de l'adjacencyList
+		while(dfsListIt.hasNext()) {
+			// On ajoute le vertex transposé correspondant à celui présent dans la dfsList
+			transposedDfsList.add(transpose[dfsListIt.next().getValue() - 1]);
+		}
+		return transpose;
+	}
+
+	public void stronglyConnectedComponent() {
+		int max = 0;
+
+				transposedDfsList.get(0).setStronglyConnectedNumber(components);
+				stronglyConnectedDfs(transposedDfsList.get(0));
+				
+				Iterator <Vertex> listIt = transposedDfsList.iterator();
+				while (listIt.hasNext()) {
+					Vertex currentVertex = listIt.next();
+					if (max < currentVertex.getStronglyConnectedNumber())
+					max = currentVertex.getStronglyConnectedNumber();
+				}
+				for (int i = 0; i < max + 1; i++) {
+					stronglyConnectedComponents.add(new ArrayList <Vertex>());
+				}
+				listIt = transposedDfsList.iterator();
+				while (listIt.hasNext()) {
+					Vertex currentVertex = listIt.next();
+					if (currentVertex.getStronglyConnectedNumber() != -1)
+					stronglyConnectedComponents.get(currentVertex.getStronglyConnectedNumber()).add(currentVertex);
+				}
+			}
+
+
+	public void stronglyConnectedDfs(Vertex vertex) {
+		vertex.setDiscovered(true);
+		Iterator <Vertex> adjacencyIt = vertex.getAdjacencyList().iterator();
+		while (adjacencyIt.hasNext()) {
+			Vertex adjacentVertex = adjacencyIt.next();
+			if (!adjacentVertex.getDiscovered()) {
+				adjacentVertex.setStronglyConnectedNumber(components);
+				stronglyConnectedDfs(adjacentVertex);
+			}
+			else
+			{
+				components++;
+			}
+		}
+		//transposedDfsList.remove(vertex);
+	}
